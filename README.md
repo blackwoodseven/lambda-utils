@@ -1,6 +1,6 @@
 # Lambda utils
 
-This project contains various HTML utils to test and mesure performance of AWS Lambda functions. Currently there's only the [Latency](#Latency) util, but we expect to increase this set of tools during the development of the different projects using AWS Lambda as main backend implementation.
+This project contains various HTML utils to test and mesure performance of AWS Lambda functions. Currently there's only the [Latency](#latency) util, but we expect to increase this set of tools during the development of the different projects using AWS Lambda as main backend implementation.
 
 > All this projects are independent and they are written without good coding practices on mind. So you can check out the code for examples, but do not use them as reference. They contain a lot of quick and dirty solutions just to get the job done.
 

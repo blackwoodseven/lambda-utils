@@ -241,7 +241,7 @@ function showReport() {
     var success = _(exec.success).compact().pluck("time").value(),
         errors = _(exec.errors).compact().pluck("time").value(),
         times = success.concat(errors),
-        remoteTimes = _(exec.success).compact().pluck('data').pluck('time').value();
+        remoteTimes = _(exec.success).compact().pluck('data').pluck('time').compact().value();
 
       str.push("\nFunction '"+exec.context.alias + "' ( success: "+success.length+", errors: "+errors.length+")");
       str.push("----------------------------");
@@ -251,7 +251,10 @@ function showReport() {
 
       if (success.length)
       str.push("Success: "+analysis(success));
-      str.push("Remote:"+analysis(remoteTimes));
+      if (remoteTimes.length) {
+          str.push("Remote:"+analysis(remoteTimes));
+      }
+
 
       if (errors.length)
       str.push("Errors: "+analysis(errors));
@@ -266,12 +269,14 @@ function showReport() {
         })
       });
 
-      successTS.push({
-        key: 'Remote time for '+exec.context.alias,
-        values: _(exec.success).pluck('data').pluck('time').map(function(v,i) {
-          return { y: v == null ? -1 : v, x: i }
-        }).value()
-      });
+      if (remoteTimes.length) {
+        successTS.push({
+          key: 'Remote time for '+exec.context.alias,
+          values: _(exec.success).pluck('data').pluck('time').map(function(v,i) {
+            return { y: v == null ? -1 : v, x: i }
+          }).value()
+        });
+      }
 
       errorsTS.push({
         key: exec.context.alias,

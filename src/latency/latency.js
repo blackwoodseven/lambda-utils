@@ -83,7 +83,7 @@ function run(lambda, options) {
             var duration = new Date() - start;
             success.push({
               time: duration,
-              data: err
+              data: data
             });
             errors.push(null);
           })

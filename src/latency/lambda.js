@@ -34,7 +34,16 @@ window.LambdaFactory = (function($, AWS) {
                     });
                     return;
                 }
-                deferred.resolve(data);
+
+                if (data.errorMessage) {
+                    try {
+                      data.errorMessage = JSON.parse(data.errorMessage);
+                    } catch(e) {}
+                    deferred.reject(data.errorMessage);
+                } else {
+                  deferred.resolve(data);
+                }
+
             } else {
                 console.error("[LAMBDA] Execution returned a error StatusCode", data);
                 deferred.reject({

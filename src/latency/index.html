@@ -12,6 +12,10 @@
 #results {
   margin-bottom: 4em;
 }
+
+#success-chart {
+  height: 400px;
+}
 </style>
 </head>
 <body>
@@ -42,11 +46,15 @@
                 <fieldset>
                   <legend>Add lambda</legend>
                   <div class="row">
-                    <div class="form-group col-lg-4">
+                    <div class="form-group col-lg-3">
                       <label for="name" class="control-label">Function name</label>
                       <input type="text" class="form-control" id="name" name="name" placeholder="Function name">
                     </div>
-                    <div class="form-group col-lg-8">
+                    <div class="form-group col-lg-3">
+                      <label for="alias" class="control-label">Function alias</label>
+                      <input type="text" class="form-control" id="alias" name="alias" placeholder="Function alias">
+                    </div>
+                    <div class="form-group col-lg-6">
                       <label for="data" class="control-label">Event data (JSON)</label>
                       <textarea class="form-control" id="data" name="data" placeholder="Event data">{}</textarea>
                     </div>

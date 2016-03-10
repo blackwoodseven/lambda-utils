@@ -30,7 +30,8 @@ function addLambda(data) {
       title = document.createElement("h5"),
       close = document.createElement("button"),
       content = document.createElement("div"),
-      pre = document.createElement("pre");
+      pre = document.createElement("pre"),
+      fnName = document.createElement("h6");
   col.className = "col-lg-4 lambda";
   col.appendChild(panel);
   $(col).data(data);
@@ -47,10 +48,12 @@ function addLambda(data) {
   };
   heading.appendChild(close);
   title.className = "panel-title";
-  title.innerText = data.name;
+  title.innerText = data.alias;
   heading.appendChild(title);
   content.className = "panel-body";
   pre.innerHTML = JSON.stringify(data.data, null, 4);
+  fnName.innerText = data.name;
+  content.appendChild(fnName);
   content.appendChild(pre);
   document.getElementById("lambdas").appendChild(col);
   checkVisibility();
@@ -119,11 +122,11 @@ function getStoreIndex() {
 }
 
 function storeOptions(ops) {
-  localStorage.setItem("lambda-"+ops.name, JSON.stringify(ops.data));
+  localStorage.setItem("lambda-"+ops.alias, JSON.stringify(ops));
 
   var existing = getStoreIndex();
 
-  existing.push(ops.name);
+  existing.push(ops.alias);
   localStorage.setItem("lambdas", JSON.stringify(existing));
 }
 
@@ -131,10 +134,7 @@ function recoverOptions() {
   var index = getStoreIndex();
 
   return index.map(function(name) {
-    return {
-      name: name,
-      data: JSON.parse(localStorage.getItem("lambda-"+name))
-    }
+    return JSON.parse(localStorage.getItem("lambda-"+name))
   });
 }
 
@@ -155,6 +155,7 @@ function test(lambda, iterations, delay) {
           iterations: iterations,
           delay: delay,
           name: $el.data("name"),
+          alias: $el.data("alias"),
           data: $el.data("data")
         },
         promise = run(lambda, options);
@@ -169,7 +170,7 @@ function test(lambda, iterations, delay) {
           root = document.createElement("div"),
           $root = $(root).addClass("lambda-progress").html(TPL);
 
-      $root.children("h5").text(options.name);
+      $root.children("h5").text(options.alias);
 
       promise.progress(function(data) {
         var pct = (data.total - data.left) / data.total;
@@ -242,7 +243,7 @@ function showReport() {
         times = success.concat(errors),
         remoteTimes = _(exec.success).compact().pluck('data').pluck('time').value();
 
-      str.push("\nFunction '"+exec.context.name + "' ( success: "+success.length+", errors: "+errors.length+")");
+      str.push("\nFunction '"+exec.context.alias + "' ( success: "+success.length+", errors: "+errors.length+")");
       str.push("----------------------------");
 
       if (success.length && errors.length)
@@ -256,7 +257,7 @@ function showReport() {
       str.push("Errors: "+analysis(errors));
 
       successTS.push({
-        key: exec.context.name,
+        key: exec.context.alias,
         values: _.pluck(exec.success, "time").map(function(v, i) {
           return {
               y: v == null ? -1 : v,
@@ -266,14 +267,14 @@ function showReport() {
       });
 
       successTS.push({
-        key: 'Remote time for '+exec.context.name,
+        key: 'Remote time for '+exec.context.alias,
         values: _(exec.success).pluck('data').pluck('time').map(function(v,i) {
           return { y: v == null ? -1 : v, x: i }
         }).value()
       });
 
       errorsTS.push({
-        key: exec.context.name,
+        key: exec.context.alias,
         values: _.pluck(exec.errors, "time").map(function(v, i) {
           return {
               y: v == null ? -1 : v,
@@ -316,7 +317,8 @@ document.forms.add.onsubmit = function(ev) {
 
   addLambda({
     name : this.name.value,
-    data : data
+    data : data,
+    alias: this.alias.value || this.name.value
   });
 
   this.reset();
